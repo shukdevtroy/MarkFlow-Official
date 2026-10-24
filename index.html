@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MarkFlow — Markdown in. Beautiful HTML out.</title>
+<meta name="description" content="MarkFlow turns Markdown into polished, self-contained HTML in four themes. Live preview, batch conversion to a zip, print-ready PDF.">
+<meta name="theme-color" content="#0b1020">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23e3b563'/%3E%3Ctext x='16' y='22' font-size='16' font-weight='700' text-anchor='middle' font-family='monospace' fill='%231a1304'%3EM↓%3C/text%3E%3C/svg%3E">
+<script>try{var t=JSON.parse(localStorage.getItem("md2html:app-theme"));if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1020;--raise:#111830;--surface:#151e3b;--line:#27324f;--text:#e8ebf4;--muted:#8e99b6;--gold:#e3b563;--gold-ink:#1a1304;--ok:#7fd1ae;--err:#ff9a9a;--glow:rgba(227,181,99,.14);--shadow:0 40px 80px -30px rgba(0,0,0,.75);
+--serif:"Instrument Serif",Georgia,serif;--sans:"Hanken Grotesk",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f1f0ec;--raise:#fbfaf8;--surface:#fff;--line:#dcd9d0;--text:#1c2236;--muted:#636b82;--gold:#9a6a12;--gold-ink:#fff;--ok:#17744f;--err:#b42323;--glow:rgba(154,106,18,.12);--shadow:0 30px 60px -30px rgba(30,34,54,.35)}}
+:root[data-theme="light"]{--bg:#f1f0ec;--raise:#fbfaf8;--surface:#fff;--line:#dcd9d0;--text:#1c2236;--muted:#636b82;--gold:#9a6a12;--gold-ink:#fff;--ok:#17744f;--err:#b42323;--glow:rgba(154,106,18,.12);--shadow:0 30px 60px -30px rgba(30,34,54,.35)}
+:root[data-theme="dark"]{color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+.aurora{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60% 50% at 15% 0%,var(--glow),transparent 70%),radial-gradient(50% 40% at 90% 20%,rgba(90,110,255,.10),transparent 70%)}
+.grid-bg{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;opacity:.28;-webkit-mask:radial-gradient(70% 60% at 50% 30%,#000,transparent);mask:radial-gradient(70% 60% at 50% 30%,#000,transparent)}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 1.25rem}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 75%,transparent);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:1rem;height:62px}
+.logo{display:flex;align-items:center;gap:.55rem;font:400 1.5rem var(--serif)}
+.logo i{width:26px;height:26px;border-radius:8px;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font:600 .8rem var(--mono);font-style:normal}
+.links{display:flex;gap:.15rem;margin-left:auto;font-size:.9rem}
+.links a{color:var(--muted);padding:.4rem .65rem;border-radius:8px;white-space:nowrap;transition:color .2s,background .2s}
+.links a:hover{color:var(--text)}
+.links a[aria-current]{color:var(--gold);background:var(--glow)}
+.burger{display:none;flex-direction:column;gap:4px}
+.burger i{display:block;width:16px;height:1.5px;background:currentColor;transition:transform .25s,opacity .2s}
+nav.open .burger i:nth-child(1){transform:translateY(5.5px) rotate(45deg)}nav.open .burger i:nth-child(2){opacity:0}nav.open .burger i:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:.7rem 1.2rem;border-radius:999px;font:500 .95rem var(--sans);cursor:pointer;transition:.25s}
+.btn:hover{transform:translateY(-2px);border-color:var(--gold)}
+.btn.gold{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);font-weight:600;box-shadow:0 10px 30px -10px var(--gold)}
+.btn.sm{padding:.45rem .9rem;font-size:.85rem}
+.icon{width:38px;height:38px;padding:0;justify-content:center}
+@media(max-width:1040px){.burger{display:inline-flex}nav .wrap{gap:.5rem}#mode{margin-left:auto}
+.links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;margin:0;padding:.4rem 1.25rem 1rem;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:var(--shadow);max-height:calc(100dvh - 62px - env(safe-area-inset-top,0px));overflow:auto}
+nav.open .links{display:flex}
+.links a{padding:.85rem .25rem;border-radius:0;border-bottom:1px solid var(--line);font-size:1rem}.links a:last-child{border:0}.links a[aria-current]{background:none}}
+.hero{position:relative;text-align:center;padding:5.5rem 0 3rem}
+.pill{display:inline-flex;gap:.6rem;align-items:center;border:1px solid var(--line);background:var(--raise);padding:.35rem .9rem;border-radius:999px;font-size:.82rem;color:var(--muted)}
+.pill b{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 9px transparent}}
+h1{font:400 clamp(2.8rem,8vw,6rem)/1 var(--serif);letter-spacing:-.025em;margin:1.4rem auto 1.2rem;max-width:12ch}
+h1 em{color:var(--gold);font-style:italic}
+.sub{max-width:560px;margin:0 auto 2rem;color:var(--muted);font-size:1.12rem}
+.cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.demo{margin:3.5rem auto 0;text-align:left;border:1px solid var(--line);border-radius:18px;background:var(--raise);box-shadow:var(--shadow);overflow:hidden;transform:perspective(1400px) rotateX(var(--rx,0deg));transition:transform .4s}
+.bar{display:flex;align-items:center;gap:.5rem;padding:.7rem 1rem;border-bottom:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.bar span.d{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.bar .st{margin-left:auto;display:flex;gap:.5rem;align-items:center;font-family:var(--mono)}
+.bar .st b{width:7px;height:7px;border-radius:50%;background:var(--gold);transition:.2s}
+.bar .st.live b{background:var(--ok)}
+.split{display:grid;grid-template-columns:1fr 1fr;height:420px}
+@media(max-width:760px){.split{grid-template-columns:1fr;height:auto}.split>div{height:260px}}
+.ed{padding:1.1rem 1.2rem;font:400 .85rem/1.75 var(--mono);white-space:pre-wrap;overflow:hidden;border-right:1px solid var(--line);background:var(--bg);color:var(--text)}
+.ed .h{color:var(--gold)}.ed .c{color:var(--ok)}
+.caret{display:inline-block;width:7px;height:1em;background:var(--gold);vertical-align:-2px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.pv{padding:.8rem;display:flex;background:var(--surface)}
+.paper{flex:1;border-radius:8px;padding:1.4rem 1.6rem;overflow:hidden;transition:background .5s,color .5s;font-size:.9rem;line-height:1.6;--pbg:#fff;--pink:#1f2430;--pcode:#f1f3f5;--pa:#1d4ed8;--pline:#dde1e6;background:var(--pbg);color:var(--pink);font-family:var(--sans)}
+.paper h1,.paper h2,.paper h3,.paper h4{font-family:inherit;font-weight:650;line-height:1.25;max-width:none;letter-spacing:-.01em}
+.paper h1{font-size:1.5rem;margin:0 0 .6rem}.paper h2{font-size:1.05rem;margin:1rem 0 .4rem}.paper h3{font-size:.95rem;margin:.9rem 0 .3rem}.paper h4{font-size:.9rem;margin:.8rem 0 .3rem}
+.paper ol{padding-left:1.3rem;margin:.4rem 0}.paper blockquote{margin:.6rem 0;padding:.1rem .9rem;border-left:3px solid var(--pline);opacity:.8}.paper hr{border:0;border-top:1px solid var(--pline);margin:1rem 0}
+.paper p{margin:.4rem 0}.paper ul{padding-left:1.2rem;margin:.4rem 0}
+.paper code{background:var(--pcode);padding:.1em .35em;border-radius:4px;font:.85em var(--mono)}
+.paper pre{background:var(--pcode);padding:.7rem .9rem;border-radius:6px;font:.78rem/1.5 var(--mono);margin:.5rem 0;overflow:hidden}
+.paper .k{color:#d73a49}.paper .s{color:#0a7d4b}
+.paper table{border-collapse:collapse;width:100%;margin:.5rem 0}.paper td,.paper th{border:1px solid var(--pline);padding:.25rem .6rem;text-align:left}
+.paper.editorial{--pbg:#fdfcf9;--pink:#2a2118;--pcode:#f1ece2;--pa:#7a2e1b;--pline:#d9d0bf;font-family:Georgia,"Iowan Old Style",serif;font-size:.98rem}
+.paper.editorial h1{font-weight:700;font-size:1.9rem}
+.paper.editorial h1+p::first-letter{float:left;font-size:2.8em;line-height:.85;padding:.06em .1em 0 0;font-weight:700}
+.paper.github{--pline:#d1d9e0}.paper.github h1,.paper.github h2{border-bottom:1px solid var(--pline);padding-bottom:.25rem}
+.paper.dark{--pbg:#0d1117;--pink:#e6edf3;--pcode:#161b22;--pa:#58a6ff;--pline:#30363d}
+.paper.dark .k{color:#ff7b72}.paper.dark .s{color:#a5d6ff}
+.chips{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted)}
+.chip{display:inline-flex;gap:.45rem;align-items:center;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:.3rem .8rem;border-radius:999px;font:inherit;cursor:pointer;transition:.2s}
+.chip[aria-checked=true]{border-color:var(--gold);box-shadow:0 0 0 3px var(--glow)}
+.sw{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.chips .stats{margin-left:auto;font-family:var(--mono)}
+section{padding:6rem 0}
+.eyebrow{font:500 .78rem var(--mono);color:var(--gold);letter-spacing:.14em;text-transform:uppercase}
+h2.t{font:400 clamp(2rem,5vw,3.4rem)/1.08 var(--serif);letter-spacing:-.02em;margin:.7rem 0 1rem;max-width:18ch}
+h2.t em{color:var(--gold)}
+.lead{color:var(--muted);max-width:520px;font-size:1.05rem}
+.two{display:grid;grid-template-columns:1fr 1.15fr;gap:3rem;align-items:center}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.queue{border:1px solid var(--line);background:var(--raise);border-radius:16px;padding:1rem;box-shadow:var(--shadow)}
+.row{display:grid;grid-template-columns:22px 1fr 80px;gap:.8rem;align-items:center;padding:.6rem .5rem;border-bottom:1px solid var(--line);font-size:.88rem}
+.row:last-of-type{border:0}
+.row .n{font-family:var(--mono);font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .bar2{height:3px;background:var(--line);border-radius:3px;margin-top:5px;overflow:hidden}
+.row .bar2 i{display:block;height:100%;width:0;background:var(--gold);transition:width .1s linear}
+.row .s{font-size:.75rem;color:var(--muted);text-align:right;font-family:var(--mono)}
+.row.done .s{color:var(--ok)}.row.done .bar2 i{background:var(--ok)}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:10px;transition:.3s}
+.row.run .dot{border-color:var(--gold);border-top-color:transparent;animation:sp .7s linear infinite}
+.row.done .dot{background:var(--ok);border-color:var(--ok);color:var(--bg)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.qfoot{display:flex;justify-content:space-between;align-items:center;padding:.9rem .5rem .2rem;gap:.6rem;flex-wrap:wrap}
+.qfoot span{font:.8rem var(--mono);color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}}@media(max-width:600px){.cards{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);background:var(--raise);border-radius:16px;padding:1.5rem;overflow:hidden;transition:.3s}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),var(--glow),transparent 70%);opacity:0;transition:.3s}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--gold) 50%,var(--line))}.card:hover::before{opacity:1}
+.card>*{position:relative}
+.card .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--glow);color:var(--gold);font:1.1rem var(--mono);margin-bottom:1rem}
+.card h3{font:400 1.5rem var(--serif);margin:0 0 .4rem}.card p{margin:0;color:var(--muted);font-size:.93rem}
+.clip{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.clip>div{border:1px solid var(--line);border-radius:12px;background:var(--raise);padding:.9rem;font:.75rem/1.5 var(--mono);overflow:hidden}
+.clip small{display:block;font:500 .7rem var(--sans);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;color:var(--muted)}
+.clip .bad pre,.clip .good pre{margin:0;color:var(--text)}.clip .bad pre{white-space:pre;animation:none}.clip .good pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.clip .bad small{color:var(--err)}.clip .good small{color:var(--ok)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:3rem;position:relative}
+@media(max-width:760px){.steps{grid-template-columns:1fr 1fr;gap:1rem}}
+.step{padding:0 1rem;position:relative}
+.step .no{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);display:grid;place-items:center;font:1.1rem var(--serif);background:var(--bg);position:relative;z-index:1;margin-bottom:1rem}
+.step::before{content:"";position:absolute;top:22px;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),var(--line))}
+.step:first-child::before{left:1rem}.step:last-child::before{right:60%}
+.step h4{margin:0 0 .3rem;font-weight:600}.step p{margin:0;color:var(--muted);font-size:.9rem}
+.stack{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2rem}
+.stack span{border:1px solid var(--line);padding:.4rem .9rem;border-radius:999px;font:.8rem var(--mono);color:var(--muted)}
+.final{text-align:center;border:1px solid var(--line);border-radius:28px;padding:5rem 1.5rem;background:radial-gradient(70% 90% at 50% 0%,var(--glow),transparent),var(--raise);margin-bottom:3rem}
+.final h2{margin:.8rem auto 1.2rem;max-width:14ch}.final .lead{margin:0 auto 2rem}
+footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--muted);font-size:.88rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.paper a{color:var(--pa);text-decoration:underline}
+.pg{margin-top:2.5rem;border:1px solid var(--line);border-radius:18px;background:var(--raise);box-shadow:var(--shadow);overflow:hidden}
+.tb{display:flex;gap:.4rem;align-items:center;padding:.6rem .8rem;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tb button{min-width:34px;height:32px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:8px;font:500 .82rem var(--sans);cursor:pointer;padding:0 .6rem;transition:.2s}
+.tb button:hover{border-color:var(--gold);color:var(--gold)}
+.tb .sp{margin-left:auto;display:flex;gap:.4rem}
+.pgs{display:grid;grid-template-columns:var(--a) 8px var(--b);height:380px}
+.pgs textarea{border:0;outline:0;resize:none;background:var(--bg);color:var(--text);font:.85rem/1.75 var(--mono);padding:1.1rem 1.2rem;min-width:0}
+.dv{cursor:col-resize;background:var(--line);outline:0;transition:background .2s}
+.dv:hover,.dv:focus-visible{background:var(--gold)}
+.pgp{padding:.8rem;background:var(--surface);overflow:auto;min-width:0}
+.pgp .paper{min-height:100%}
+.pgs.f1{grid-template-columns:1fr 0 0}.pgs.f1 .pgp{padding:0;overflow:hidden}
+.pgs.f2{grid-template-columns:0 0 1fr}.pgs.f2 textarea{padding:0}
+@media(max-width:760px){.pgs,.pgs.f1,.pgs.f2{grid-template-columns:1fr;grid-template-rows:200px 220px;height:auto}.dv{display:none}}
+.pfoot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.7rem 1rem;border-top:1px solid var(--line);font:.75rem var(--mono);color:var(--muted)}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:2.5rem}
+@media(max-width:900px){.mini{grid-template-columns:1fr 1fr}}@media(max-width:560px){.mini{grid-template-columns:1fr}}
+.mini div{border:1px solid var(--line);background:var(--raise);border-radius:12px;padding:1rem 1.1rem;transition:.25s}
+.mini div:hover{border-color:var(--gold);transform:translateY(-2px)}
+.mini b{display:block;font-weight:600;font-size:.92rem;margin-bottom:.2rem}.mini span{color:var(--muted);font-size:.84rem;line-height:1.45;display:block}
+.row.bad .dot{background:var(--err);border-color:var(--err);color:var(--bg)}.row.bad .s{color:var(--err)}.row.bad .bar2 i{background:var(--err)}
+.ov{height:3px;background:var(--line);border-radius:3px;margin:.2rem .5rem .6rem;overflow:hidden}.ov i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.qth{display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;font:.75rem var(--mono);color:var(--muted)}.qth button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:.2rem .6rem;font:inherit;cursor:pointer}.qth button:hover{border-color:var(--gold)}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+:root{color-scheme:dark}@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light}}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+a:focus-visible,button:focus-visible,textarea:focus-visible,summary:focus-visible,.dv:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.lead code{font:.88em var(--mono);color:var(--text);background:var(--surface);padding:.1em .4em;border-radius:5px;border:1px solid var(--line)}
+@media(max-width:760px){.step::before{display:none}}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem}
+.code{min-width:0;border:1px solid var(--line);background:var(--raise);border-radius:14px;overflow:hidden}
+.code b{display:block;padding:.65rem 1rem;border-bottom:1px solid var(--line);font:500 .82rem var(--sans);color:var(--muted)}
+.code pre{margin:0;padding:1rem 1.1rem;font:.82rem/1.8 var(--mono);overflow-x:auto;color:var(--text)}
+.mini.m3{grid-template-columns:repeat(3,1fr)}.mini.m3 b{font-family:var(--mono);font-size:.85rem;color:var(--gold)}
+@media(max-width:760px){.codes,.mini.m3{grid-template-columns:1fr}}
+.faq{max-width:760px;margin-top:2.5rem;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.15rem .25rem;font:400 1.35rem/1.3 var(--serif)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";flex:none;font:400 1.4rem var(--mono);color:var(--gold);transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 1.3rem;padding:0 2.5rem 0 .25rem;color:var(--muted);max-width:62ch}
+footer .wrap.fx{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:2rem}
+footer .fx p{margin:.6rem 0 0;max-width:30ch}
+footer .fc b{display:block;color:var(--text);font-weight:600;margin-bottom:.5rem}
+footer .fc a{display:block;padding:.2rem 0;transition:color .2s}footer .fc a:hover{color:var(--gold)}
+@media(max-width:760px){footer .wrap.fx{grid-template-columns:1fr 1fr}footer .fx>div:first-child{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<nav aria-label="Primary"><div class="wrap">
+  <a class="logo" href="#top"><i>M↓</i>MarkFlow</a>
+  <div class="links" id="menu"><a href="#features">Features</a><a href="#editor">Editor</a><a href="#batch">Batch</a><a href="#print">Print</a><a href="#details">Details</a><a href="#how">How it works</a><a href="#selfhost">Self-host</a><a href="#faq">FAQ</a></div>
+  <button class="btn icon" id="mode" aria-label="Toggle light and dark">◑</button>
+  <a class="btn gold sm" href="https://markflow-web-dgzl.onrender.com">Open app</a>
+  <button class="btn icon burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+</div></nav>
+
+<header class="hero" id="top"><div class="grid-bg"></div><div class="wrap">
+  <span class="pill"><b></b>Markdown → HTML, live as you type</span>
+  <h1>Write Markdown. <em>Ship the page.</em></h1>
+  <p class="sub">MarkFlow turns plain Markdown into polished, self-contained HTML in four hand-tuned themes. No build step, no template wrangling. Export one file, or twenty at once.</p>
+  <div class="cta"><a class="btn gold" href="https://markflow-web-dgzl.onrender.com">Start writing →</a><a class="btn" href="#how">See how it works</a></div>
+
+  <div class="demo rv" id="demo">
+    <div class="bar"><span class="d"></span><span class="d"></span><span class="d"></span>&nbsp; draft.md<span class="st" id="st"><b></b><em id="stt" style="font-style:normal">converting…</em></span></div>
+    <div class="split">
+      <div class="ed" id="ed"></div>
+      <div class="pv"><div class="paper" id="paper"></div></div>
+    </div>
+    <div class="chips" id="themes" role="radiogroup" aria-label="Export theme"><span>Export theme</span></div>
+  </div>
+</div></header>
+
+<section id="features"><div class="wrap">
+  <div class="eyebrow">What makes it different</div>
+  <h2 class="t rv">Not just a converter. A <em>typesetter.</em></h2>
+  <p class="lead rv">Most tools hand you raw HTML and wish you luck. MarkFlow ships every export fully styled, so the page you preview is the page you publish.</p>
+  <div class="cards">
+    <div class="card rv"><div class="ic">◧</div><h3>Live split view</h3><p>Type on the left, watch the page rebuild on the right ~450 ms after your last keystroke. Your scroll position is preserved across every update.</p></div>
+    <div class="card rv"><div class="ic">Aa</div><h3>Four export themes</h3><p>Minimal, Editorial (with a magazine drop cap), GitHub and Dark. Switch instantly, and the exported file carries the style with it.</p></div>
+    <div class="card rv"><div class="ic">☰</div><h3>Auto outline</h3><p>Headings become a clickable table of contents. Jump to any section with a smooth scroll inside the preview.</p></div>
+    <div class="card rv"><div class="ic">{ }</div><h3>Syntax highlighting</h3><p>Fenced code blocks are highlighted by Pygments with a palette that matches each theme, light or dark.</p></div>
+    <div class="card rv"><div class="ic">⎙</div><h3>Print-perfect PDF</h3><p>Dedicated print styles force clean black-on-white, avoid orphaned headings and wrap long code instead of cutting it off.</p></div>
+    <div class="card rv"><div class="ic">⛨</div><h3>Safe by design</h3><p>The preview runs in a sandboxed iframe with no script permission, so nothing inside a document can ever execute.</p></div>
+  </div>
+</div></section>
+
+<section id="editor"><div class="wrap">
+  <div class="eyebrow">Try it right here</div>
+  <h2 class="t rv">A real editor, <em>not a textbox.</em></h2>
+  <p class="lead rv">Format with the toolbar or Ctrl/⌘ + B, I, K, and undo still works natively. Drag the divider to resize it, double-click to reset. Your draft is saved on this device, just like in the app.</p>
+  <div class="pg rv">
+    <div class="tb" role="toolbar" aria-label="Formatting">
+      <button data-a="h" title="Heading (click again to change level)">H</button><button data-a="b" title="Bold (Ctrl/Cmd+B)" style="font-weight:700">B</button><button data-a="i" title="Italic (Ctrl/Cmd+I)" style="font-style:italic">I</button><button data-a="l" title="Link (Ctrl/Cmd+K)">Link</button><button data-a="c" title="Code">&lt;/&gt;</button><button data-a="t" title="Table">Table</button>
+      <span class="sp"><button data-f="1">Focus editor</button><button data-f="2">Focus preview</button><button data-f="0">Split</button></span>
+    </div>
+    <div class="pgs" id="pgs"><textarea id="pta" spellcheck="false" aria-label="Markdown input" placeholder="Start typing Markdown…"></textarea><div class="dv" id="dv" role="separator" aria-orientation="vertical" aria-label="Resize panes" tabindex="0"></div><div class="pgp"><div class="paper minimal" id="ppaper"></div></div></div>
+    <div class="chips" id="pthemes" role="radiogroup" aria-label="Preview theme"><span>Preview theme</span></div>
+    <div class="pfoot"><span id="pstats"></span><span id="psave">draft saved on this device</span></div>
+  </div>
+</div></section>
+
+<section id="batch"><div class="wrap two">
+  <div>
+    <div class="eyebrow">Batch mode</div>
+    <h2 class="t rv">Twenty files. <em>One click.</em></h2>
+    <p class="lead rv">Drop a folder of .md, .markdown or .txt files. MarkFlow converts three at a time, shows live progress per file, and bundles everything into a single zip. Oversized files fail gracefully without stopping the rest, and changing the theme re-converts everything that's done.</p>
+    <p class="rv"><button class="btn gold" id="replay">▶ Run the simulation</button></p>
+  </div>
+  <div class="queue rv" id="queue"></div>
+</div></section>
+
+<section id="print"><div class="wrap two">
+  <div>
+    <div class="eyebrow">Attention to detail</div>
+    <h2 class="t rv">Code that <em>never</em> gets cut off.</h2>
+    <p class="lead rv">Long lines are the silent killer of printed documentation. MarkFlow switches to wrapping code blocks the moment you print or save as PDF.</p>
+  </div>
+  <div class="clip rv">
+    <div class="bad"><small>Other tools</small><pre>def a_function_with_a_really_long_signature(argument_one, argument_two, argu</pre></div>
+    <div class="good"><small>MarkFlow</small><pre>def a_function_with_a_really_long_signature(argument_one, argument_two, argument_three)</pre></div>
+  </div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <div class="eyebrow">And the little things</div>
+  <h2 class="t rv">Built by someone who <em>actually uses it.</em></h2>
+  <div class="mini">
+    <div class="rv"><b>Open any file</b><span>Load a .md, .markdown or .txt straight from disk into the editor.</span></div>
+    <div class="rv"><b>Copy HTML</b><span>One click puts the complete, styled page on your clipboard.</span></div>
+    <div class="rv"><b>Source view</b><span>Flip from Preview to the raw HTML source without leaving the pane.</span></div>
+    <div class="rv"><b>Focus mode</b><span>Hide either pane when you just want to write, or just want to read.</span></div>
+    <div class="rv"><b>Remembers you</b><span>Draft, export theme, pane split and light/dark choice all persist.</span></div>
+    <div class="rv"><b>Friendly errors</b><span>Clear messages for wrong file types, non-UTF-8 text, or oversized files.</span></div>
+    <div class="rv"><b>Configurable limits</b><span>Set the upload cap with one environment variable, MAX_UPLOAD_MB.</span></div>
+    <div class="rv"><b>Keyboard &amp; screen-reader ready</b><span>ARIA roles, a focusable divider with arrow-key resizing, live status.</span></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="eyebrow">How it works</div>
+  <h2 class="t rv">Simple on the surface. <em>Solid underneath.</em></h2>
+  <div class="steps">
+    <div class="step rv"><div class="no">1</div><h4>You write</h4><p>Type, paste, or drop a .md file into the React editor.</p></div>
+    <div class="step rv"><div class="no">2</div><h4>FastAPI converts</h4><p>Python-Markdown handles tables, TOC, fenced code and lists.</p></div>
+    <div class="step rv"><div class="no">3</div><h4>Themed &amp; highlighted</h4><p>Pygments colors the code; theme CSS is inlined into the page.</p></div>
+    <div class="step rv"><div class="no">4</div><h4>You export</h4><p>Copy HTML, download a file, print to PDF, or grab a zip.</p></div>
+  </div>
+  <div class="stack rv"><span>React 18</span><span>Vite</span><span>FastAPI</span><span>Python-Markdown</span><span>Pygments</span><span>JSZip</span><span>Render</span></div>
+</div></section>
+
+<section id="selfhost"><div class="wrap">
+  <div class="eyebrow">Run it yourself</div>
+  <h2 class="t rv">Host it <em>your way.</em></h2>
+  <p class="lead rv">MarkFlow is a FastAPI backend and a React frontend. Start both in two terminals, then open this site at localhost:5173 and the app at localhost:5173/app/.</p>
+  <div class="codes rv">
+    <div class="code"><b>Backend</b><pre>cd backend
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000</pre></div>
+    <div class="code"><b>Frontend</b><pre>cd frontend
+cp .env.example .env
+npm install
+npm run dev</pre></div>
+  </div>
+  <div class="mini m3">
+    <div class="rv"><b>MAX_UPLOAD_MB</b><span>Largest file the API accepts, in megabytes. Defaults to 1.</span></div>
+    <div class="rv"><b>ALLOWED_ORIGINS</b><span>Comma-separated list of frontend URLs allowed to call the API.</span></div>
+    <div class="rv"><b>VITE_API_URL</b><span>Where the frontend finds the API. Set it before you build.</span></div>
+  </div>
+  <p class="lead rv" style="margin-top:2rem">To deploy, the repo includes a <code>render.yaml</code> that sets up both services on Render: the API as a web service and the frontend as a static site. Right now the github repository is not public. The app is public for all to use.</p>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <div class="eyebrow">FAQ</div>
+  <h2 class="t rv">Questions, <em>answered.</em></h2>
+  <div class="faq rv">
+    <details><summary>Is MarkFlow free?</summary><p>Yes. There is no sign-up and nothing to install. Open the app and start writing.</p></details>
+    <details><summary>Where does my Markdown go?</summary><p>Your text is sent to the MarkFlow API, converted in memory and sent straight back. The server does not store documents. Your draft, export theme and pane layout are saved only in your own browser.</p></details>
+    <details><summary>What are the file limits?</summary><p>Batch mode takes up to 20 files at a time. Files must be .md, .markdown or .txt, saved as UTF-8, and up to 1 MB each by default. If you host MarkFlow yourself, set MAX_UPLOAD_MB to change the limit.</p></details>
+    <details><summary>Why was the first conversion slow?</summary><p>The hosted server sleeps when nobody has used it for a while. The first request can take up to a minute to wake it. After that, conversions are fast.</p></details>
+    <details><summary>Which Markdown features work?</summary><p>Headings, lists, tables, links, blockquotes, fenced code blocks with syntax highlighting, and an automatic table of contents. Conversion uses Python-Markdown and Pygments.</p></details>
+    <details><summary>How do I get a PDF?</summary><p>Select PDF above the preview, then choose Save as PDF in the print dialog. Print styles switch to black on white and wrap long code lines so nothing is cut off.</p></details>
+    <details><summary>Is it safe to preview untrusted files?</summary><p>The preview runs in a sandboxed frame with scripts turned off, so nothing in a document can run while you look at it.</p></details>
+  </div>
+</div></section>
+
+<div class="wrap" id="open"><div class="final rv">
+  <div class="eyebrow">Ready when you are</div>
+  <h2 class="t">Your words deserve a <em>better page.</em></h2>
+  <p class="lead">Free to use. Nothing to install. Open MarkFlow and watch your first document come to life.</p>
+  <a class="btn gold" href="https://markflow-web-dgzl.onrender.com">Open MarkFlow →</a>
+</div></div>
+<footer><div class="wrap fx">
+  <div><span class="logo" style="font-size:1.2rem"><i>M↓</i>MarkFlow</span><p>Markdown in, beautiful HTML out.</p></div>
+  <div class="fc"><b>Product</b><a href="#features">Features</a><a href="#editor">Editor</a><a href="#batch">Batch</a><a href="#print">Print</a></div>
+  <div class="fc"><b>Project</b><a href="#details">Details</a><a href="#how">How it works</a><a href="#selfhost">Self-host</a><a href="#faq">FAQ</a></div>
+  <div class="fc"><b>Get started</b><a href="https://markflow-web-dgzl.onrender.com">Open the app</a><a href="#top">Back to top</a></div>
+</div></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+/* theme toggle */
+const root=document.documentElement;
+const mq=matchMedia('(prefers-color-scheme: light)'),isLight=()=>root.dataset.theme?root.dataset.theme==='light':mq.matches;
+const sync=()=>{const l=isLight();$('#mode').title=l?'Switch to dark':'Switch to light';$('meta[name=theme-color]').content=l?'#f1f0ec':'#0b1020'};
+$('#mode').onclick=()=>{const t=isLight()?'dark':'light';root.dataset.theme=t;try{localStorage.setItem('md2html:app-theme',JSON.stringify(t))}catch(e){}sync()};sync();
+/* reveal + spotlight */
+const io=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&(x.target.classList.add('in'),io.unobserve(x.target))),{threshold:.12});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%3)*80+'ms';io.observe(el)});
+document.querySelectorAll('.card').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',e.clientX-r.left+'px');c.style.setProperty('--my',e.clientY-r.top+'px')}));
+/* demo */
+const SRC=`# Hello, MarkFlow
+
+Write **Markdown** on the left. The page on the right updates as you type.
+
+## What you get
+
+- Four export themes, switchable live
+- Tables, links and \`inline code\`
+- An outline built from your headings
+
+| Tool    | Role     |
+|---------|----------|
+| FastAPI | Backend  |
+| React   | Frontend |
+
+\`\`\`python
+def greet(name):
+    return f"Hello, {name}"
+\`\`\`
+`;
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>').replace(/\[([^\]]+)\]\(([^)]*)\)/g,'<a href="#" onclick="return false">$1</a>').replace(/`([^`]+)`/g,'<code>$1</code>');
+function md(t){const L=t.split('\n');let o='',ls='',i=0,m;const cl=()=>{if(ls){o+='</'+ls+'>';ls=''}},li=k=>{if(ls!==k){cl();o+='<'+k+'>';ls=k}};
+while(i<L.length){const l=L[i];
+if(l.startsWith('```')){cl();let c='';i++;while(i<L.length&&!L[i].startsWith('```')){c+=L[i]+'\n';i++}
+c=esc(c).replace(/\b(def|return)\b/g,'<span class="k">$1</span>').replace(/(f&quot;.*|f".*)/,'<span class="s">$1</span>');o+='<pre>'+c+'</pre>'}
+else if(m=/^(#{1,4}) (.*)/.exec(l)){cl();o+='<h'+m[1].length+'>'+inl(m[2])+'</h'+m[1].length+'>'}
+else if(m=/^[-*] (.*)/.exec(l)){li('ul');o+='<li>'+inl(m[1])+'</li>'}
+else if(m=/^\d+\. (.*)/.exec(l)){li('ol');o+='<li>'+inl(m[1])+'</li>'}
+else if(m=/^> ?(.*)/.exec(l)){cl();o+='<blockquote>'+inl(m[1])+'</blockquote>'}
+else if(/^(---|\*\*\*)\s*$/.test(l)){cl();o+='<hr>'}
+else if(l.startsWith('|')){cl();let r=[];while(i<L.length&&L[i].startsWith('|')){if(!/^\|[-:| ]+\|$/.test(L[i]))r.push(L[i].split('|').slice(1,-1).map(x=>x.trim()));i++}i--;
+o+='<table>'+r.map((x,k)=>'<tr>'+x.map(c=>`<${k?'td':'th'}>${inl(c)}</${k?'td':'th'}>`).join('')+'</tr>').join('')+'</table>'}
+else if(l.trim()){cl();o+='<p>'+inl(l)+'</p>'}else cl();i++}cl();return o}
+const hl=t=>esc(t).replace(/^(#{1,2} .*)$/gm,'<span class="h">$1</span>').replace(/(\*\*.+?\*\*)/g,'<span class="c">$1</span>');
+const TH=[['minimal','Minimal','#fff','#1f2430'],['editorial','Editorial','#fdfcf9','#2a2118'],['github','GitHub','#fff','#0969da'],['dark','Dark','#0d1117','#e6edf3']];
+let cur=0,auto=true;const chips=$('#themes');
+TH.forEach((t,i)=>{const b=document.createElement('button');b.className='chip';b.setAttribute('role','radio');b.innerHTML=`<span class="sw" style="background:${t[2]};border-color:${t[3]}"></span>${t[1]}`;b.onclick=()=>{auto=false;setTheme(i)};chips.appendChild(b)});
+const stats=document.createElement('span');stats.className='stats';chips.appendChild(stats);
+function setTheme(i){cur=i;$('#paper').className='paper '+TH[i][0];[...chips.querySelectorAll('.chip')].forEach((c,k)=>c.setAttribute('aria-checked',k===i))}
+setTheme(0);
+let n=0,tm;const ed=$('#ed'),st=$('#st'),stt=$('#stt');
+function paint(){const t=SRC.slice(0,n);ed.innerHTML=hl(t)+'<span class="caret"></span>';ed.scrollTop=ed.scrollHeight;$('#paper').innerHTML=md(t);
+const w=(t.match(/[\p{L}\p{N}]+/gu)||[]).length;stats.textContent=w+' words · '+Math.max(1,Math.ceil(w/200))+' min read'}
+function type(){if(n<SRC.length){n+=2;paint();st.classList.remove('live');stt.textContent='converting…';tm=setTimeout(type,34)}
+else{st.classList.add('live');stt.textContent='live';cycle()}}
+function cycle(){setTimeout(()=>{if(auto){setTheme((cur+1)%4);cycle()}},2600)}
+new IntersectionObserver((e,o)=>{if(e[0].isIntersecting){type();o.disconnect()}}).observe($('#demo'));
+$('#demo').addEventListener('pointermove',e=>{const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--rx',((e.clientY-r.top)/r.height-.5)*-2+'deg')});
+$('#demo').addEventListener('pointerleave',e=>e.currentTarget.style.setProperty('--rx','0deg'));
+/* playground */
+const pta=$('#pta'),pp=$('#ppaper'),pgs=$('#pgs'),dv=$('#dv');
+let init='# Try me\n\nSelect a word and press **Ctrl/⌘+B**.\n\n- Edit this list\n- Drag the divider\n- Hit the Table button\n';
+try{init=localStorage.getItem('mf:draft')||init}catch(e){}
+pta.value=init;
+function pr(){pp.innerHTML=md(pta.value);const w=(pta.value.match(/[\p{L}\p{N}]+/gu)||[]).length;$('#pstats').textContent=w+' words · '+Math.max(1,Math.ceil(w/200))+' min read · '+pta.value.length+' characters';try{localStorage.setItem('mf:draft',pta.value)}catch(e){}}
+pta.oninput=pr;pr();
+function ins(f,t,x,a,b){pta.focus();pta.setSelectionRange(f,t);if(!document.execCommand('insertText',false,x))pta.setRangeText(x,f,t);pta.setSelectionRange(a,b);pr()}
+function wrap(a,b,ph){const s=pta.selectionStart,e=pta.selectionEnd,t=pta.value.slice(s,e)||ph;ins(s,e,a+t+b,s+a.length,s+a.length+t.length)}
+const ACT={h(){const v=pta.value,s=pta.selectionStart,ls=s?v.lastIndexOf('\n',s-1)+1:0,m=/^(#{1,3}) /.exec(v.slice(ls,ls+4)),cut=m?m[0].length:0,nx=!m?'## ':m[1].length<3?m[1]+'# ':'',p=s+nx.length-cut;ins(ls,ls+cut,nx,p,p)},b(){wrap('**','**','bold text')},i(){wrap('*','*','italic text')},l(){const s=pta.selectionStart,e=pta.selectionEnd,t=pta.value.slice(s,e)||'link text',u=s+t.length+3;ins(s,e,'['+t+'](https://)',u,u+8)},c(){const s=pta.selectionStart,e=pta.selectionEnd,t=pta.value.slice(s,e);t.includes('\n')?ins(s,e,'```\n'+t+'\n```',s+4,s+4+t.length):wrap('`','`','code')},t(){const s=pta.selectionStart,ld=s>0&&pta.value[s-1]!=='\n'?'\n\n':'',x=ld+'| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Cell     | Cell     | Cell     |\n';ins(s,pta.selectionEnd,x,s+x.length,s+x.length)}};
+document.querySelectorAll('.tb [data-a]').forEach(b=>b.onclick=()=>ACT[b.dataset.a]());
+document.querySelectorAll('.tb [data-f]').forEach(b=>b.onclick=()=>{pgs.className='pgs'+(+b.dataset.f?' f'+b.dataset.f:'')});
+pta.onkeydown=e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey)return;const k=e.key.toLowerCase();if(k==='b'||k==='i'||k==='k'){e.preventDefault();ACT[k==='k'?'l':k]()}};
+const setS=v=>{v=Math.min(75,Math.max(25,v));pgs.style.setProperty('--a',v+'fr');pgs.style.setProperty('--b',(100-v)+'fr');dv.dataset.v=v};setS(50);
+dv.onpointerdown=e=>{e.preventDefault();dv.setPointerCapture(e.pointerId);const r=pgs.getBoundingClientRect();dv.onpointermove=ev=>setS((ev.clientX-r.left)/r.width*100);dv.onpointerup=()=>{dv.onpointermove=null}};
+dv.ondblclick=()=>setS(50);dv.onkeydown=e=>{const v=+dv.dataset.v;if(e.key==='ArrowLeft'){e.preventDefault();setS(v-3)}else if(e.key==='ArrowRight'){e.preventDefault();setS(v+3)}};
+/* batch simulation */
+const FILES=['README.md','changelog.md','api-guide.markdown','notes.txt','meeting-oct.md','roadmap.md','huge-export.md'];
+const q=$('#queue');let run=0;
+async function batch(){const id=++run;
+q.innerHTML='<div class="ov"><i id="ovi"></i></div>'+FILES.map((f,i)=>`<div class="row" id="r${i}"><div class="dot"></div><div><div class="n">${f}</div><div class="bar2"><i></i></div></div><div class="s">queued</div></div>`).join('')+'<div class="qfoot"><span id="qc">0 / '+FILES.length+' converted</span><button class="btn gold sm" id="dz" disabled style="opacity:.4">Download all (.zip)</button></div><div class="qfoot"><div class="qth">Switch theme, finished files re-convert:'+TH.map((t,k)=>'<button data-k="'+k+'">'+t[1]+'</button>').join('')+'</div></div>';
+let next=0,done=0,fin=0;
+const worker=async()=>{while(next<FILES.length){const i=next++,r=$('#r'+i);if(id!==run)return;r.classList.add('run');r.querySelector('.s').textContent='converting';
+const huge=FILES[i].startsWith('huge');for(let p=0;p<=(huge?30:100);p+=10){if(id!==run)return;r.querySelector('i').style.width=p+'%';await new Promise(x=>setTimeout(x,40+Math.random()*50))}
+r.classList.remove('run');if(huge){r.classList.add('bad');r.querySelector('.dot').textContent='!';r.querySelector('.s').textContent='3.2 MB > 1 MB';r.querySelector('i').style.width='100%'}else{r.classList.add('done');r.querySelector('.dot').textContent='✓';r.querySelector('.s').textContent='done';done++}$('#qc').textContent=done+' / '+FILES.length+' converted';$('#ovi').style.width=(++fin/FILES.length*100)+'%'}};
+await Promise.all([worker(),worker(),worker()]);
+if(id===run){const b=$('#dz');b.disabled=false;b.style.opacity=1;b.title='Open the app to convert your own files';b.onclick=()=>{location.href='app/'}}}
+$('#replay').onclick=batch;
+q.addEventListener('click',e=>{if(!e.target.closest('[data-k]'))return;q.querySelectorAll('.row.done').forEach((r,j)=>{r.classList.replace('done','run');r.querySelector('.s').textContent='converting';r.querySelector('.dot').textContent='';r.querySelector('i').style.width='0';setTimeout(()=>{r.classList.replace('run','done');r.querySelector('.s').textContent='done';r.querySelector('.dot').textContent='✓';r.querySelector('i').style.width='100%'},500+j*140)})});
+new IntersectionObserver((e,o)=>{if(e[0].isIntersecting){batch();o.disconnect()}},{threshold:.4}).observe(q);
+
+/* nav: mobile menu + current section */
+const nv=$('nav'),bg=$('#burger'),nl=[...document.querySelectorAll('.links a')];
+const shut=()=>{nv.classList.remove('open');bg.setAttribute('aria-expanded','false')};
+bg.onclick=()=>{bg.setAttribute('aria-expanded',nv.classList.toggle('open'))};
+nl.forEach(a=>a.addEventListener('click',shut));
+addEventListener('keydown',e=>{if(e.key==='Escape')shut()});
+document.addEventListener('click',e=>{if(!nv.contains(e.target))shut()});
+const mark=id=>nl.forEach(a=>a.hash==='#'+id?a.setAttribute('aria-current','true'):a.removeAttribute('aria-current'));
+const spy=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&mark(e.target.id)),{rootMargin:'-45% 0px -50% 0px'});
+nl.forEach(a=>{const t=document.querySelector(a.hash);t&&spy.observe(t)});
+addEventListener('scroll',()=>{if(scrollY<300)mark('')},{passive:true});
+/* playground theme chips */
+const pth=$('#pthemes');
+TH.forEach((t,i)=>{const b=document.createElement('button');b.className='chip';b.setAttribute('role','radio');b.innerHTML=`<span class="sw" style="background:${t[2]};border-color:${t[3]}"></span>${t[1]}`;
+b.onclick=()=>{pp.className='paper '+t[0];pth.querySelectorAll('.chip').forEach((c,k)=>c.setAttribute('aria-checked',k===i))};pth.appendChild(b)});
+pth.querySelector('.chip').click();
+</script>
+</body>
+</html>
